@@ -1,27 +1,19 @@
 package com.layeredy.ntepd;
 
 import android.content.Context;
-import android.view.View;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 
 public class NoteUtils {
 
     public static void readAllNotes(Context context) {
-        File directory = new File(MainActivity.getInstance().getFilesDir(), "notes");
+        File directory = new File(context.getFilesDir(), "notes");
 
         // Ensure the directory exists
-        if (!directory.exists()) {
-            if (!directory.mkdir()) {  // Attempt to create the directory if missing
-                System.out.println("Failed to create notes directory.");
-                return;
-            }
+        if (!directory.exists() && !directory.mkdir()) {
+            System.out.println("Failed to create notes directory.");
+            return;
         }
 
         // Check again if it's a valid directory
@@ -39,13 +31,13 @@ public class NoteUtils {
 
         // Loop through and read notes
         for (File file : files) {
-            String content = readNote(file.getName().replaceAll(".txt", ""), context);
-            System.out.println("Note: " + file.getName().replaceAll(".txt", "") + "Content: " + content);
+            String content = readNote(file.getName().replace(".txt", ""), context);
+            System.out.println("Note: " + file.getName().replace(".txt", "") + "\nContent: " + content);
         }
     }
 
     public static void saveNote(String filename, String data, Context context) {
-        File directory = new File(MainActivity.getInstance().getFilesDir(), "notes");
+        File directory = new File(context.getFilesDir(), "notes");
         if (!directory.exists()) {
             directory.mkdir();
         }
@@ -61,10 +53,14 @@ public class NoteUtils {
         }
     }
 
-
     public static String readNote(String filename, Context context) {
-        File directory = new File(MainActivity.getInstance().getFilesDir(), "notes");
+        File directory = new File(context.getFilesDir(), "notes");
         File file = new File(directory, filename + ".txt");
+
+        if (!file.exists()) {
+            Toast.makeText(context, "File not found", Toast.LENGTH_SHORT).show();
+            return "";
+        }
 
         StringBuilder stringBuilder = new StringBuilder();
         try (FileInputStream fis = new FileInputStream(file);
@@ -79,5 +75,4 @@ public class NoteUtils {
         }
         return stringBuilder.toString();
     }
-
 }

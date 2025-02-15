@@ -3,6 +3,7 @@ package com.layeredy.ntepd;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -86,10 +87,13 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
+        noteListButtonView.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, ViewNotes.class);
+            startActivity(intent);
+        });
+
         String savedNote = NoteUtils.readNote("demo", this);
         System.out.println("saved note: " + savedNote);
-
-
 
         NoteUtils.readAllNotes(this);
     }

@@ -13,6 +13,13 @@
         android:theme="@style/Theme.Ntepd"
         tools:targetApi="31" >
         <activity
+            android:name=".ViewNotes"
+            android:exported="false" />
+        <activity
+            android:name=".ViewNotesActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Ntepd" />
+        <activity
             android:name=".NotepadActivity"
             android:exported="false"
             android:theme="@style/Theme.Ntepd" />
