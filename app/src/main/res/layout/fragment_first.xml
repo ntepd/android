@@ -33,12 +33,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <EditText
             android:id="@+id/note_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Untitled Note"
+            android:hint="Untitled Note"
+            android:inputType="text"
+            android:background="@null"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

@@ -15,6 +15,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.snackbar.Snackbar;
 import com.layeredy.ntepd.databinding.ActivityMainBinding;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -23,12 +24,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
+    private static MainActivity instance;
+
+    public static MainActivity getInstance() {
+        return instance;
+    }
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
@@ -48,8 +56,8 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
         // set the default note title
-        TextView noteTitleView = findViewById(R.id.note_title);
-        noteTitleView.setText(Language.UNTITLED_NOTE);
+        TextView noteTitle = findViewById(R.id.note_title);
+        noteTitle.setText(Language.UNTITLED_NOTE);
 
         // set the list notes button title
         TextView noteListButtonView = findViewById(R.id.list_notes_button);
@@ -58,58 +66,33 @@ public class MainActivity extends AppCompatActivity {
         // set the view name
         getSupportActionBar().setTitle(Language.APP_TITLE);
 
-
         // add the save note button listener & set button title
         Button saveNoteButton = findViewById(R.id.save_note_button);
         saveNoteButton.setText(Language.SAVE_NOTE_BUTTON_TITLE);
 
+
+        // save the note when the save button is clicked
         saveNoteButton.setOnClickListener(view -> {
-            EditText noteText = findViewById(R.id.note);
-            String noteToSave = noteText.getText().toString();
-            saveNote("demo.txt", noteToSave);
+            String noteTitleToSave = noteTitle.getText().toString();
+
+            if(noteTitleToSave.equals("Untitled Note")) {
+                noteTitleToSave = "Note " + UUID.randomUUID().toString().replace("-", "").substring(0, 5);
+            }
+
+            EditText noteContent = findViewById(R.id.note);
+            String noteToSave = noteContent.getText().toString();
+
+            NoteUtils.saveNote(noteTitleToSave, noteToSave, this);
+
         });
 
-        String savedNote = readNote("demo.txt");
+        String savedNote = NoteUtils.readNote("demo", this);
         System.out.println("saved note: " + savedNote);
 
 
 
-        /*binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAnchorView(R.id.fab)
-                        .setAction("Action", null).show();
-            }
-        });*/
+        NoteUtils.readAllNotes(this);
     }
-
-    private void saveNote(String filename, String data) {
-        try (FileOutputStream fos = openFileOutput(filename, Context.MODE_PRIVATE)) {
-            fos.write(data.getBytes());
-            Toast.makeText(this, "File saved", Toast.LENGTH_SHORT).show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Failed to save file", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private String readNote(String filename) {
-        StringBuilder stringBuilder = new StringBuilder();
-        try (FileInputStream fis = openFileInput(filename);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(fis))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                stringBuilder.append(line).append("\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Failed to read file", Toast.LENGTH_SHORT).show();
-        }
-        return stringBuilder.toString();
-    }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -142,3 +125,5 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 }
+
+// hi cackle
